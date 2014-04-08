@@ -1,0 +1,29 @@
+<html>
+  <head>
+  <script type="text/javascript" src="Storage.js"></script>
+  <script type="text/javascript" src="Todolist.js"></script>
+  <script type="text/javascript" src="View.js"></script>
+  <script type="text/javascript" src="Controller.js"></script>
+    <meta charset=utf-8>
+    <title>My Todo List</title>
+    <link rel="stylesheet" type="text/css" href="todolistStyle.css">
+
+  </head>
+  <body>
+  <div id="wrapper">
+  	<h1 class="centerPosition">Todo List</h1>
+  	<h4 class="centerPosition">Add new task:</h4>
+  	<form id="add-new-task" class="centerPosition" autocomplete="off" onsubmit="todolist.addItem()">
+  		<input id="new-task" name="new-task" type="text" autofocus="autofocus">
+  	</form>
+  	<ul id="list"></ul>
+  </div>
+  </body>
+  </html>
+
+
+
+
+
+
+
