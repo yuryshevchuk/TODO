@@ -1,5 +1,6 @@
-
-function ListStorage() {
+window.ListStorage = (function (){
+'use strict';
+var ListStorage = function() {
 	var localStorage = window['localStorage'],
 		savedItems = localStorage.getItem("Items");
 };
@@ -13,3 +14,5 @@ ListStorage.prototype.getData = function () {
 ListStorage.prototype.saveData = function (data) {
 	return localStorage.setItem("Items", JSON.stringify(data));
 };
+return ListStorage;
+}());

@@ -1,36 +1,45 @@
-
-var vars, oldHash = '', massive = [], hash = '';
+window.Hash = (function (){
+'use strict';
+var vars={page: 1}, oldHash = '', massive = [], filters = [], Hash;
 window.location.hash = '#&page=1';
 Hash = {
 	get: function(){
-		var hash, splitter, hashes;
+		var hash, splitter, hashes, stroke;
 			hashes = decodeURIComponent(window.location.hash.substr(1));
 			splitter = '&';
 			vars = {filter: [], page: []};
-		if (hashes.length == 0) {
-			return vars;
-		} else {
-			hashes = hashes.split(splitter);
-		};
+			if (hashes.length == 0) {
+				return vars;
+			} else {
+				hashes = hashes.split(splitter);
+			}
 		console.log(hashes);
 		for (var i in hashes) {
 			hash = hashes[i].split('=');
 			console.log(hash);
-			if(hash[0] == "filter" && hash[1]) {
-				vars[hash[0]].push(hash[1]);
-			} else if (hash[0] == "page" && hash[1]){
-				vars[hash[0]] = hash[1];
-			}
-		};
+				if(hash[0] == "filter" && hash[1]) {
+					stroke = hash[1].split(',');
+					for (var i = 0; i < stroke.length; i++) {
+						vars[hash[0]].push(stroke[i]);
+					};
+				} else if (hash[0] == "page" && hash[1]){
+					vars[hash[0]] = hash[1];
+				}
+		}
 		console.log(vars);
 		return vars;
 	},
 	set: function(values){
 		console.log(values);
-		for (var i in values) {
-			if (values.hasOwnProperty(i)) {
-				hash += '&' + i + '=' + values[i];
-			}
+		var hash = '';
+		if (values.page) {
+			hash += '&page=' + values.page;
+		}
+		if (values.filter && filters.indexOf(values.filter) == '-1') {
+			filters.push(values.filter);
+		}
+		if (filters.join(',')){
+			hash += '&filter=' + filters.join(',');
 		}
 		window.location.hash = hash;
 	},
@@ -41,36 +50,31 @@ Hash = {
 	},
 	changePage: function(val) {
 		var hash = this.get() || {};
+		hash.filter = '';
 		hash['page'] = val;
 		this.set(hash);
 	},
 	hashEventHanler: function (){
-			if(oldHash !== window.location.hash ){
-					this.get();
-						console.log('1');
-					oldHash = window.location.hash;
-					return true;
-			} else {
-
-				return false;
-			};
+		if(oldHash !== window.location.hash ){
+			this.get();
+			oldHash = window.location.hash;
+			return true;
+		} else {
+			return false;
+		}
 	},
 	getVars: function (){
-		if (!vars.page) {
-			delete vars.page;
-		}
-		if (!vars.filter) {
-			delete vars.filter;
-		}
 		return vars;
 	},
 	clear: function (){
-		hash = '';
 		vars = {filter: [], page: [1]};
 		massive = [];
+		filters = [];
 		window.location.hash = '#&page=1';
 	}
 };
+return Hash;
+}());
 
 /*for (var i in hashes) {
 			if (hashes.hasOwnProperty(i)) {

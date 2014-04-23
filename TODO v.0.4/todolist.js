@@ -1,53 +1,69 @@
-
-function Todolist (storage) {
-	var data = {}, tagScope = [], numbOfPages;
+window.Todolist = (function (){
+'use strict';
+var Todolist = function (storage) {
+	var data = {}, tagScope = [], numbOfPages, filterResult={};
 	this.getData = function (filterObject) {
-		var filteredData=[], filterResult=[];
+		var filteredData=[];
+		console.log('getData',filterObject);
 		if (filterObject) {
-			if(filterObject.filter.length){
+			if(filterObject.filter){
+				console.log('start filtering')
 				for (var i = 0; i < filterObject.filter.length; i++) {
 					filteredData[filterObject.filter[i]] = this.filterItems(filterObject.filter[i]);
-				};
+				}
 				for (var key in filteredData) {
 					for (var i = 0; i < filteredData[key].length; i++) {
 						filterResult[filteredData[key][i].content] = filteredData[key][i];
-					};
+					}
 				}
-			return this.pagination(filterResult, filterObject.page[0]);
-			};
-		};
+				console.log("filterResult", filterResult);
+				console.log("filterResult", filterResult.length);
+				if (Object.keys(filterResult).length) {
+					return this.pagination(filterResult, filterObject.page);
+				} else {
+					return this.pagination(data, filterObject.page);
+				} 
+			} 
+		}
 		if (!data.length){
 			data = this.loadData();
-			if (filterObject) {;
-			return this.pagination(data, filterObject.page[0]);
-		} else {
-			return data;
-		};
-		};
+				if (filterObject) {
+					console.log("filter page", filterObject.page);
+					return this.pagination(data, filterObject.page);
+				} else {
+					return data;
+				}
+		}
 	};
 	this.pagination = function (enteredData, page) {
 		var pageFilter = [], result = {};
 		numbOfPages = Math.ceil(Object.keys(enteredData).length/6);
-		console.log(enteredData, numbOfPages, page);
+		console.log('pagination',enteredData, numbOfPages, page);
 		if (page && page <= numbOfPages) {
 				for (var key in enteredData) {
 					if (enteredData[key]){
 						pageFilter.push(enteredData[key]);
-					};
-				};
+					}
+				}
 				for (var i = page*6 - 6; i < page*6; i++) {
 					if (pageFilter[i]) {
 						result[pageFilter[i].content] = pageFilter[i];
-					};
-				};
+					}
+				}
 		} else {
 			return enteredData;
-		};
+		}
 		return result;
 	};
 	this.getNumberOfPages = function (){
-		console.log(numbOfPages);
+		console.log("get number of pages",numbOfPages);
 		return numbOfPages;
+	};
+	this.clearFilteredData = function (){
+		for (var key in filterResult) {
+			delete filterResult[key];
+		}
+		return filterResult;
 	}
 	this.loadData = function () {
 		return storage.getData();
@@ -59,7 +75,7 @@ function Todolist (storage) {
 		if (item){
 			item.index = 'add';
 			data[item.content]=item;
-		};
+		}
 		return this.saveData(data);
 	};
 	this.toogleItemStatus = function (i){
@@ -84,8 +100,8 @@ function Todolist (storage) {
 			if (data[key].tags.indexOf(filterValue) != '-1') {
 				filteredData.push(data[key]);
 			}
-			};
-		console.log();
+		}
+		console.log(filteredData);
 		return filteredData;
 	};
 	this.getTags = function () {
@@ -96,9 +112,9 @@ function Todolist (storage) {
 						for (var i = 0; i < data[key].tags.length; i++) {
 							this.getUpperTags(data[key].tags[i]);
 							smallTagLinks[data[key].content] = data[key].tags[i];
-						};
-					};
-				};
+						}
+					}
+				}
 		return smallTagLinks;
 	};
 	this.getUpperTags = function () {
@@ -108,12 +124,12 @@ function Todolist (storage) {
 				for (var i = 0; i < data[key].tags.length; i++) {
 					if (tagScope.indexOf(data[key].tags[i]) == '-1') {
 						tagScope.push(data[key].tags[i]);
-					};
-					
-				};
-			};
-		};
+					}
+				}
+			}
+		}
 		return tagScope;
 	};
 };
-
+return Todolist;
+}());

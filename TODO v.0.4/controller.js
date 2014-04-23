@@ -1,5 +1,6 @@
-
-var storage, list, view, form, addItemLink, cancelEditingItem, upperTags, smallTags, ul, body, resetFilter;
+(function(){
+'use strict';
+var storage, list, view, form, addItemLink, upperTags, smallTags, ul, body, resetFilter, pagination;
 
 window.onload = function (){
 	ul = document.getElementById("list");
@@ -15,30 +16,25 @@ window.onload = function (){
 			ul.addEventListener("click", listEventHandler);
 			form.onSubmitHandler = submitFormHandler;
 			upperTags.addEventListener("click", tagEventHandler);
-			pagination = ("click", paginationEventHandler);
-		view.renderUpperTags(list.getUpperTags());
-		view.refreshItems(list.getData());
-		view.renderPagination(list.getNumberOfPages());
+			pagination.addEventListener("click", paginationEventHandler);
+			view.renderUpperTags(list.getUpperTags());
+
 				setInterval(function hashHandler(){
 					if (Hash.hashEventHanler()) {
 						view.refreshItems(list.getData(Hash.getVars()));
+						view.renderPagination(list.getNumberOfPages());
 						resetFilter = document.getElementById('allTagsLink');
 						resetFilter.addEventListener("click", resetFilterEvent);
 					};
-						smallTags = document.getElementsByClassName('tags-small');
-							for (var i = 0; i < smallTags.length; i++) {
-								smallTags[i].addEventListener("click", tagEventHandler);
-							};
-				}, 10);
-		
+				}, 5);
 };
 
 function submitFormHandler (item) {
 	(!item.index) ? list.addData(item) : list.saveData();
 	view.renderUpperTags(list.getUpperTags());
-	view.refreshItems(list.getData());
+	view.refreshItems(list.getData(Hash.getVars()));
 	view.renderPagination(list.getNumberOfPages());
-}
+};
 function addItemLinkHandler(event) {
 	event = event || window.event;
 	event.preventDefault();
@@ -46,7 +42,9 @@ function addItemLinkHandler(event) {
 };
 function resetFilterEvent() {
 	Hash.clear();
-	view.refreshItems(list.getData());
+	view.clearTagsSelection();
+	list.clearFilteredData();
+	view.renderUpperTags(list.getUpperTags());
 };
 
 function paginationEventHandler(event) {
@@ -54,9 +52,9 @@ function paginationEventHandler(event) {
 	event.preventDefault();
 	event.stopPropagation();
 	var target = event.target || event.srcElement;
-	target.setAttribute("class", "activePage");
-	console.log(target.dataset.value);
+	if(target.dataset.value) {
 		Hash.changePage(target.dataset.value);
+	}
 };
 
 function tagEventHandler (event) {
@@ -65,7 +63,7 @@ function tagEventHandler (event) {
 	var target = event.target || event.srcElement;
 		if (target.dataset.value) {
 			Hash.addFilter(target.dataset.value);
-			view.renderUpperTags(list.getUpperTags());
+			view.renderUpperTags(list.getUpperTags(), target.dataset.value);
 		};
 
 	return false;
@@ -73,6 +71,7 @@ function tagEventHandler (event) {
 
 function listEventHandler (event){
 	event = event || window.event;
+	event.preventDefault();
 	var target = event.target || event.srcElement;
 	var i = target.dataset.index;
 			if (target.tagName == "INPUT") {
@@ -81,9 +80,9 @@ function listEventHandler (event){
 			} else if (target.tagName == "A" && target.id =="cancelEditingItem"){
 				list.deleteItem(i);
 				view.renderUpperTags(list.getUpperTags());
-				view.refreshItems(list.getData());
-				view.renderPagination(list.getNumberOfPages());
+				view.refreshItems(list.getData(Hash.getVars()));
 			} else if (target.tagName == "A" && target.dataset.index){
 				form.editItem(list.getItem(i));
 		}
 };
+}());
