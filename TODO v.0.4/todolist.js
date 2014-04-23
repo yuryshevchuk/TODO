@@ -4,10 +4,9 @@ var Todolist = function (storage) {
 	var data = {}, tagScope = [], numbOfPages, filterResult={};
 	this.getData = function (filterObject) {
 		var filteredData=[];
-		console.log('getData',filterObject);
 		if (filterObject) {
 			if(filterObject.filter){
-				console.log('start filtering')
+
 				for (var i = 0; i < filterObject.filter.length; i++) {
 					filteredData[filterObject.filter[i]] = this.filterItems(filterObject.filter[i]);
 				}
@@ -16,8 +15,7 @@ var Todolist = function (storage) {
 						filterResult[filteredData[key][i].content] = filteredData[key][i];
 					}
 				}
-				console.log("filterResult", filterResult);
-				console.log("filterResult", filterResult.length);
+
 				if (Object.keys(filterResult).length) {
 					return this.pagination(filterResult, filterObject.page);
 				} else {
@@ -28,7 +26,6 @@ var Todolist = function (storage) {
 		if (!data.length){
 			data = this.loadData();
 				if (filterObject) {
-					console.log("filter page", filterObject.page);
 					return this.pagination(data, filterObject.page);
 				} else {
 					return data;
@@ -38,7 +35,6 @@ var Todolist = function (storage) {
 	this.pagination = function (enteredData, page) {
 		var pageFilter = [], result = {};
 		numbOfPages = Math.ceil(Object.keys(enteredData).length/6);
-		console.log('pagination',enteredData, numbOfPages, page);
 		if (page && page <= numbOfPages) {
 				for (var key in enteredData) {
 					if (enteredData[key]){
@@ -56,7 +52,6 @@ var Todolist = function (storage) {
 		return result;
 	};
 	this.getNumberOfPages = function (){
-		console.log("get number of pages",numbOfPages);
 		return numbOfPages;
 	};
 	this.clearFilteredData = function (){
@@ -95,13 +90,13 @@ var Todolist = function (storage) {
 	};
 	this.filterItems = function(filterValue) {
 		var filteredData = [];
-		console.log(filterValue);
+
 		for (var key in data){
 			if (data[key].tags.indexOf(filterValue) != '-1') {
 				filteredData.push(data[key]);
 			}
 		}
-		console.log(filteredData);
+
 		return filteredData;
 	};
 	this.getTags = function () {
