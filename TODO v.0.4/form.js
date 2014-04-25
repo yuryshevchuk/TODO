@@ -1,18 +1,12 @@
-
-
-
-define('form' ['domReady!'], function (){
-
+window.Form = (function (){
 'use strict';
-console.log("form loaded");
-var InputForm = function (formPlace) {
-	console.log(formPlace);
-
+var Form = function (formPlace) {
+	var self = this;
 	var formElement, overlay, popup, newTask, newTag, condition, cancelEditingItem, newDiv, cancelFormButton, tagsArr;
 		newDiv = document.createElement('div');
 		newDiv.setAttribute('id', 'formWrapper');
-		newDiv = "<a href='' id='overlay' class='hidden'></a><div id='popup'><div id='popupContent'><a href=''id='cancelEditingItem' class='cross-button-link position-right'></a><form id='taskForm' autocomplete='off'><h4>Add new task:</h4><input id='newTask' type='text'><label for='newTag'>Tags:</label><input id='newTag' name='newTag' type='text'><input id='condition' type='checkbox'><label for='condition'>Done</label><input id='confirmFormButton' class='form-button position-right' type='submit' value='Confirm'></input><input type='button' id='cancelFormButton' class='red form-button position-right' value='Cancel'></input></form></div></div>";
-		formPlace.innerHTML = newDiv;
+		newDiv.innerHTML = "<a href='' id='overlay' class='hidden'></a><div id='popup'><div id='popupContent'><a href=''id='cancelEditingItem' class='cross-button-link position-right'></a><form id='taskForm' autocomplete='off'><h4>Add new task:</h4><input id='newTask' type='text'><label for='newTag'>Tags:</label><input id='newTag' name='newTag' type='text'><input id='condition' type='checkbox'><label for='condition'>Done</label><input id='confirmFormButton' class='form-button position-right' type='submit' value='Confirm'></input><input type='button' id='cancelFormButton' class='red form-button position-right' value='Cancel'></input></form></div></div>";
+		formPlace.appendChild(newDiv);
 			overlay = document.getElementById('overlay');
 			popup = document.getElementById('popup');
 			newTask = document.getElementById('newTask');
@@ -72,15 +66,15 @@ var InputForm = function (formPlace) {
 	};
 };
 
-InputForm.prototype.submitHandler = function() {
+Form.prototype.submitHandler = function() {
 		this.onSubmitHandler(this.saveItemEdit());
 		return false;
 };
 
-InputForm.prototype.cancelHandler = function (event) {
+Form.prototype.cancelHandler = function (event) {
 	event = event || window.event;
 	var target = event.target || event.srcElement;
 	self.onCancel(item);
 };
-return InputForm;
+return Form;
 }());

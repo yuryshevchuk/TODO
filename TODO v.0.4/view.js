@@ -1,83 +1,64 @@
+window.View = (function (){
 
-
-
-define('view', function (){
-
-'use strict';
-console.log("view loaded");
 var View = function (placeForData, placeForUpperTags, placeForPagination){
 	var multipleSelect = [], selectedTags = [], classTagSelected = [];
+
 	var renderData = {
-		"activeItems": '',
-		"doneItems": '',
-		"item": '',
-		"i": '',
+		"item": [],
 		"check": '',
-		"tags": ''
+		"tags": '',
+		"upperTags": [],
+		"selectedTags": [],
+		"numbOfPages": []
 	};
 
-	console.log(placeForData);
+	this.refreshItems = function (data, numbOfPages){
 
-	this.refreshItems = function (data){
-		var template = "{{{activeItems}}}{{{doneItems}}}";
+		var listTemplate = "{{#item}}<li class='todo-item {{condition}}' data-index='{{content}}'><input data-index='{{content}}' {{check}} type='checkbox'><a href='' data-index='{{content}}'>{{content}}</a><a href='' id='cancelEditingItem' class='cross-button-link position-right' data-index='{{content}}'></a><br>{{#tags}}<a href='' class='tags-small' data-value='{{.}}'>#{{.}}</a>{{/tags}}</li>{{/item}}";
+		var paginationTemplate = "{{#numbOfPages}}<li><a href='' class='page' data-value='{{.}}'>{{.}}</a></li>{{/numbOfPages}}";
+			if (numbOfPages != 1) {
+				for (var i = 1; i <= numbOfPages; i++) {
+					renderData["numbOfPages"].push(i);
+				}
+			}
 				for (var key in data) {
-					if (data[key].condition == "active"){
-						renderData["activeItems"] +=(this.renderList(data[key], key, ''));
+					if (data[key].condition == 'active') {
+						data[key]["check"] = '';
+						renderData["item"].unshift(data[key]);
 					} else {
-						renderData["doneItems"] += this.renderList(data[key], key, "checked='checked'");
+						data[key]["check"] = "checked='checked'";
+						renderData["item"].splice(renderData["item"].length, 0, data[key]);
 					}
 				}
-		placeForData.innerHTML = Mustache.render(template, renderData);
-		renderData["activeItems"] = '';
-		renderData["doneItems"] = '';
-	};
-
-	this.renderList = function (item, i, check){
-		renderData["item"] = item;
-		renderData["i"] = i;
-		renderData["check"] = check;
-		this.renderSmallTags();
-		var template = "<li class='todo-item {{item.condition}}' data-index='{{i}}'><input {{check}} data-index='{{i}}' type='checkbox'><a href='' data-index='{{i}}'>{{item.content}}</a><a href='' id='cancelEditingItem' class='cross-button-link position-right' data-index='{{i}}'></a><br>{{{tags}}}</li>";
-		return Mustache.render(template, renderData);
-	};
-
-	this.renderSmallTags = function () {
-		var template = "";
-			if (renderData["item"].tags) {
-					template += "{{#item.tags}}<a href='' class='tags-small' data-value='{{.}}'>#{{.}}</a>{{/item.tags}}";
-			}
-		renderData["tags"] = Mustache.render(template, renderData);
+					placeForData.innerHTML = Mustache.render(listTemplate, renderData);
+					placeForPagination.innerHTML = Mustache.render(paginationTemplate, renderData);
+		renderData["item"] = [];
+		renderData["numbOfPages"] = [];
 	};
 
 	this.renderUpperTags = function (tagScope, dataValue){
-		var upperTagLinks = "<a href='' id='allTagsLink' class='reset-filter'>Show All</a>";
-		classTagSelected = [];
+		var template = "<a href='' id='allTagsLink' class='reset-filter'>Show All</a>";
+		var selection;
 		classTagSelected.length = 50;
 		if (dataValue && selectedTags.indexOf(dataValue) == '-1') {
-			selectedTags.push(dataValue);
+			renderData["selectedTags"].push(dataValue);
 		}
-		for (var i = 0; i < tagScope.length; i++) {
-			for (var j = 0; j < selectedTags.length; j++) {
-				if (tagScope[i] == selectedTags[j]) {classTagSelected.splice(i, 0, 'selected')};
-			};
-			upperTagLinks += "<a href='' class='upper-tags "+classTagSelected[i]+"' data-value='"+tagScope[i]+"'>"+tagScope[i]+"</a>";
-		}
-			placeForUpperTags.innerHTML = upperTagLinks;
-	};
-
-	this.clearTagsSelection = function () {
-		selectedTags = []; 
-		classTagSelected = [];
-	};
-
-	this.renderPagination = function (numbOfPages) {
-		var pagination = '';
-		if (numbOfPages != 1) {
-			for (var i = 0; i < numbOfPages; i++) {
-			pagination += "<li><a href='' class='page' data-value='"+(i+1)+"'>"+(i+1)+"</a></li>";
+			for (var i = 0; i < tagScope.length; i++) {
+				for (var j = 0; j < renderData["selectedTags"].length; j++) {
+					if (tagScope[i] == renderData["selectedTags"][j]) {
+						classTagSelected.splice(i, 0, 'selected');
+					}
+				}
+				renderData["upperTags"].push({"value": tagScope[i], "selection": classTagSelected[i]});
 			}
-		}
-		placeForPagination.innerHTML = pagination;
+		template += "{{#upperTags}}<a href='' class='upper-tags {{selection}}' data-value='{{value}}'>{{value}}</a>{{/upperTags}}";
+		placeForUpperTags.innerHTML = Mustache.render(template, renderData);
+		classTagSelected = [];
+		renderData["upperTags"]=[];
+	};
+	this.clearTagsSelection = function () {
+		renderData["selectedTags"] = [];
+		classTagSelected = [];
 	};
 };
 return View;

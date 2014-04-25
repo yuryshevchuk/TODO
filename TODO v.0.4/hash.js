@@ -1,10 +1,5 @@
-
-
-
-define(function (){
-
+window.Hash = (function (){
 'use strict';
-console.log("hash loaded");
 var vars={page: 1}, oldHash = '', massive = [], filters = [], Hash;
 window.location.hash = '#&page=1';
 Hash = {

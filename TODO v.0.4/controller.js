@@ -1,11 +1,8 @@
-
-
-
-require(["todolist","storage","view", "form", "hash", "domReady!"], function(Todolist, ListStorage, View, InputForm, Hash){
+(function(){
 'use strict';
 var storage, list, view, form, addItemLink, upperTags, smallTags, ul, body, resetFilter, pagination;
 
-	console.log(Todolist);
+window.onload = function (){
 	ul = document.getElementById("list");
 	upperTags = document.getElementById("tags");
 	addItemLink = document.getElementById("addNewItemLink");
@@ -14,8 +11,7 @@ var storage, list, view, form, addItemLink, upperTags, smallTags, ul, body, rese
 		storage = new ListStorage();
 		list = new Todolist(storage);
 		view = new View(ul, upperTags, pagination);
-		console.log(body);
-		form = new InputForm(body);
+		form = new Form(body);
 			addItemLink.addEventListener("click", addItemLinkHandler);
 			ul.addEventListener("click", listEventHandler);
 			form.onSubmitHandler = submitFormHandler;
@@ -25,13 +21,13 @@ var storage, list, view, form, addItemLink, upperTags, smallTags, ul, body, rese
 
 				setInterval(function hashHandler(){
 					if (Hash.hashEventHanler()) {
-						view.refreshItems(list.getData(Hash.getVars()));
-						view.renderPagination(list.getNumberOfPages());
+						view.refreshItems(list.getData(Hash.getVars()), list.getNumberOfPages());
+
 						resetFilter = document.getElementById('allTagsLink');
 						resetFilter.addEventListener("click", resetFilterEvent);
 					};
 				}, 5);
-
+};
 
 function submitFormHandler (item) {
 	(!item.index) ? list.addData(item) : list.saveData();
@@ -80,7 +76,7 @@ function listEventHandler (event){
 	var i = target.dataset.index;
 			if (target.tagName == "INPUT") {
 				list.toogleItemStatus(i);
-				view.refreshItems(list.getData());
+				view.refreshItems(list.getData(Hash.getVars()));
 			} else if (target.tagName == "A" && target.id =="cancelEditingItem"){
 				list.deleteItem(i);
 				view.renderUpperTags(list.getUpperTags());
@@ -89,5 +85,4 @@ function listEventHandler (event){
 				form.editItem(list.getItem(i));
 		}
 };
-
 }());

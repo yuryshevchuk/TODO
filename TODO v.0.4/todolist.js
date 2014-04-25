@@ -1,14 +1,8 @@
-
-
-
-define("todolist", function (){
-
+window.Todolist = (function (){
 'use strict';
-console.log("list loaded");
 var Todolist = function (storage) {
 	var data = {}, tagScope = [], numbOfPages, filterResult={};
-	return {
-	getData : function (filterObject) {
+	this.getData = function (filterObject) {
 		var filteredData=[];
 		if (filterObject) {
 			if(filterObject.filter){
@@ -37,8 +31,8 @@ var Todolist = function (storage) {
 					return data;
 				}
 		}
-	},
-	pagination : function (enteredData, page) {
+	};
+	this.pagination = function (enteredData, page) {
 		var pageFilter = [], result = {};
 		numbOfPages = Math.ceil(Object.keys(enteredData).length/6);
 		if (page && page <= numbOfPages) {
@@ -56,45 +50,46 @@ var Todolist = function (storage) {
 			return enteredData;
 		}
 		return result;
-	},
-	getNumberOfPages : function (){
+	};
+	this.getNumberOfPages = function (){
 		return numbOfPages;
-	},
-	clearFilteredData : function (){
+	};
+	this.clearFilteredData = function (){
 		for (var key in filterResult) {
 			delete filterResult[key];
 		}
 		return filterResult;
-	},
-	loadData : function () {
+	}
+	this.loadData = function () {
 		return storage.getData();
-	},
-	saveData : function () {
+	};
+	this.saveData = function () {
 		return storage.saveData(data);
-	},
-	addData : function (item) {
+	};
+	this.addData = function (item) {
 		if (item){
 			item.index = 'add';
 			data[item.content]=item;
 		}
-		return Todolist.saveData(data);
-	},
-	toogleItemStatus : function (i){
+		return this.saveData(data);
+	};
+	this.toogleItemStatus = function (i){
 		(data[i].condition == "active") ? data[i].condition = "done" : data[i].condition = "active";
-		return Todolist.saveData(data);
-	},
-	deleteItem : function (i) {
+		return this.saveData(data);
+	};
+	this.deleteItem = function (i) {
 		delete data[i];
-		return Todolist.saveData(data);
-	},
-	replaceItem : function(item) {
+		return this.saveData(data);
+	};
+	this.replaceItem = function(item) {
 		data.splice(item.index, 1, item);
-		return Todolist.saveData(data);
-	},
-	getItem : function (i) {
+		return this.saveData(data);
+	};
+	this.getItem = function (i) {
+		
 		return data[i];
-	},
-	filterItems : function(filterValue) {
+	};
+	this.filterItems = function(filterValue) {
 		var filteredData = [];
 
 		for (var key in data){
@@ -104,22 +99,22 @@ var Todolist = function (storage) {
 		}
 
 		return filteredData;
-	},
-	getTags : function () {
-		Todolist.getData();
+	};
+	this.getTags = function () {
+		this.getData();
 		var smallTagLinks = {};
 		for (var key in data) {
 					if (data[key].tags){
 						for (var i = 0; i < data[key].tags.length; i++) {
-							Todolist.getUpperTags(data[key].tags[i]);
+							this.getUpperTags(data[key].tags[i]);
 							smallTagLinks[data[key].content] = data[key].tags[i];
 						}
 					}
 				}
 		return smallTagLinks;
-	},
-	getUpperTags : function () {
-		Todolist.getData();
+	};
+	this.getUpperTags = function () {
+		this.getData();
 		for (var key in data) {
 			if (data[key].tags){
 				for (var i = 0; i < data[key].tags.length; i++) {
@@ -130,8 +125,8 @@ var Todolist = function (storage) {
 			}
 		}
 		return tagScope;
-	}
+	};
 };
-};
+
 return Todolist;
 }());
