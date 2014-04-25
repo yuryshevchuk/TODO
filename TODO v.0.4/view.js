@@ -1,8 +1,12 @@
-window.View = (function (){
+
+
+
+define('view', function (){
+
 'use strict';
+console.log("view loaded");
 var View = function (placeForData, placeForUpperTags, placeForPagination){
 	var multipleSelect = [], selectedTags = [], classTagSelected = [];
-
 	var renderData = {
 		"activeItems": '',
 		"doneItems": '',
@@ -11,6 +15,8 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 		"check": '',
 		"tags": ''
 	};
+
+	console.log(placeForData);
 
 	this.refreshItems = function (data){
 		var template = "{{{activeItems}}}{{{doneItems}}}";

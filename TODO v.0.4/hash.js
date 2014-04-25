@@ -1,5 +1,10 @@
-window.Hash = (function (){
+
+
+
+define(function (){
+
 'use strict';
+console.log("hash loaded");
 var vars={page: 1}, oldHash = '', massive = [], filters = [], Hash;
 window.location.hash = '#&page=1';
 Hash = {
@@ -13,10 +18,8 @@ Hash = {
 			} else {
 				hashes = hashes.split(splitter);
 			}
-		console.log(hashes);
 		for (var i in hashes) {
 			hash = hashes[i].split('=');
-			console.log(hash);
 				if(hash[0] == "filter" && hash[1]) {
 					stroke = hash[1].split(',');
 					for (var i = 0; i < stroke.length; i++) {
@@ -26,11 +29,9 @@ Hash = {
 					vars[hash[0]] = hash[1];
 				}
 		}
-		console.log(vars);
 		return vars;
 	},
 	set: function(values){
-		console.log(values);
 		var hash = '';
 		if (values.page) {
 			hash += '&page=' + values.page;

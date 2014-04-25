@@ -1,8 +1,11 @@
-(function(){
+
+
+
+require(["todolist","storage","view", "form", "hash", "domReady!"], function(Todolist, ListStorage, View, InputForm, Hash){
 'use strict';
 var storage, list, view, form, addItemLink, upperTags, smallTags, ul, body, resetFilter, pagination;
 
-window.onload = function (){
+	console.log(Todolist);
 	ul = document.getElementById("list");
 	upperTags = document.getElementById("tags");
 	addItemLink = document.getElementById("addNewItemLink");
@@ -11,7 +14,8 @@ window.onload = function (){
 		storage = new ListStorage();
 		list = new Todolist(storage);
 		view = new View(ul, upperTags, pagination);
-		form = new Form(body);
+		console.log(body);
+		form = new InputForm(body);
 			addItemLink.addEventListener("click", addItemLinkHandler);
 			ul.addEventListener("click", listEventHandler);
 			form.onSubmitHandler = submitFormHandler;
@@ -27,7 +31,7 @@ window.onload = function (){
 						resetFilter.addEventListener("click", resetFilterEvent);
 					};
 				}, 5);
-};
+
 
 function submitFormHandler (item) {
 	(!item.index) ? list.addData(item) : list.saveData();
@@ -85,4 +89,5 @@ function listEventHandler (event){
 				form.editItem(list.getItem(i));
 		}
 };
+
 }());
