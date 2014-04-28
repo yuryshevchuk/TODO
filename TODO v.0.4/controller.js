@@ -21,11 +21,11 @@ console.log(View);
 		form = new InputForm(body);
 			addItemLink.addEventListener("click", addItemLinkHandler);
 			ul.addEventListener("click", listEventHandler);
+			ul.addEventListener("click", tagEventHandler);
 			form.onSubmitHandler = submitFormHandler;
 			upperTags.addEventListener("click", tagEventHandler);
 			pagination.addEventListener("click", paginationEventHandler);
 			view.renderUpperTags(list.getUpperTags());
-
 				setInterval(function hashHandler(){
 					if (Hash.hashEventHanler()) {
 						view.refreshItems(list.getData(Hash.getVars()), list.getNumberOfPages());
