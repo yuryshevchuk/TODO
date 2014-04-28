@@ -1,6 +1,6 @@
 define(function (){
 'use strict';
-console.log("hash.js loaded");
+console.log("controller.js loaded");
 var vars={page: 1}, oldHash = '', massive = [], filters = [], Hash;
 window.location.hash = '#&page=1';
 Hash = {
@@ -26,6 +26,11 @@ Hash = {
 		}
 		return vars;
 	},
+	applySavedVars: function(value){
+		if (value) {
+			vars = value;
+		} 
+	},
 	set: function(values){
 		var hash = '';
 		if (values.page) {
@@ -33,6 +38,12 @@ Hash = {
 		}
 		if (values.filter && filters.indexOf(values.filter) == '-1') {
 			filters.push(values.filter);
+		} else {
+			for (var i = 0; i < filters.length; i++) {
+				if (filters[i] == values.filter) {
+					filters.splice(i, 1);
+				}
+			}
 		}
 		if (filters.join(',')){
 			hash += '&filter=' + filters.join(',');
@@ -60,6 +71,7 @@ Hash = {
 		}
 	},
 	getVars: function (){
+		console.log(vars);
 		return vars;
 	},
 	clear: function (){

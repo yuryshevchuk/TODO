@@ -6,7 +6,7 @@ var InputForm = function (formPlace) {
 	var formElement, overlay, popup, newTask, newTag, condition, cancelEditingItem, newDiv, cancelFormButton, tagsArr;
 		newDiv = document.createElement('div');
 		newDiv.setAttribute('id', 'formWrapper');
-		newDiv.innerHTML = "<a href='' id='overlay' class='hidden'></a><div id='popup'><div id='popupContent'><a href=''id='cancelEditingItem' class='cross-button-link position-right'></a><form id='taskForm' autocomplete='off'><h4>Add new task:</h4><input id='newTask' type='text'><label for='newTag'>Tags:</label><input id='newTag' name='newTag' type='text'><input id='condition' type='checkbox'><label for='condition'>Done</label><input id='confirmFormButton' class='form-button position-right' type='submit' value='Confirm'></input><input type='button' id='cancelFormButton' class='red form-button position-right' value='Cancel'></input></form></div></div>";
+		newDiv.innerHTML = "<a href='' id='overlay' class='hidden'></a><div id='popup'><div id='popupContent'><a href=''id='cancelEditingItem' class='cross-button-link position-right'></a><form id='taskForm' autocomplete='off'><h4>Add new task:</h4><input id='newTask' type='text' required><label for='newTag'>Tags:</label><input id='newTag' name='newTag' type='text'><input id='condition' type='checkbox'><label for='condition'>Done</label><input id='confirmFormButton' class='form-button position-right' type='submit' value='Confirm'></input><input type='button' id='cancelFormButton' class='red form-button position-right' value='Cancel'></input></form></div></div>";
 		formPlace.appendChild(newDiv);
 			overlay = document.getElementById('overlay');
 			popup = document.getElementById('popup');
@@ -26,7 +26,9 @@ var InputForm = function (formPlace) {
 		cancelFormButton.addEventListener("click", function() {
 			overlay.setAttribute('class', 'hidden');
 		});
-		overlay.addEventListener("click", function() {
+		overlay.addEventListener("click", function(event) {
+			event = event || window.event;
+			event.preventDefault();
 			overlay.setAttribute('class', 'hidden');
 		});
 	this.show = function () {

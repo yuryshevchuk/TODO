@@ -5,9 +5,10 @@ var Todolist = function (storage) {
 	var data = {}, tagScope = [], numbOfPages, filterResult={};
 	this.getData = function (filterObject) {
 		var filteredData=[];
+		tagScope = [];
+		console.log(filterObject);
 		if (filterObject) {
 			if(filterObject.filter){
-
 				for (var i = 0; i < filterObject.filter.length; i++) {
 					filteredData[filterObject.filter[i]] = this.filterItems(filterObject.filter[i]);
 				}
@@ -16,7 +17,7 @@ var Todolist = function (storage) {
 						filterResult[filteredData[key][i].content] = filteredData[key][i];
 					}
 				}
-
+				console.log(filterResult);
 				if (Object.keys(filterResult).length) {
 					return this.pagination(filterResult, filterObject.page);
 				} else {
@@ -50,6 +51,7 @@ var Todolist = function (storage) {
 		} else {
 			return enteredData;
 		}
+		filterResult={};
 		return result;
 	};
 	this.getNumberOfPages = function (){
@@ -62,10 +64,10 @@ var Todolist = function (storage) {
 		return filterResult;
 	}
 	this.loadData = function () {
-		return storage.getData();
+		return storage.getData("Items");
 	};
 	this.saveData = function () {
-		return storage.saveData(data);
+		return storage.saveData("Items", data);
 	};
 	this.addData = function (item) {
 		if (item){
@@ -80,6 +82,9 @@ var Todolist = function (storage) {
 	};
 	this.deleteItem = function (i) {
 		delete data[i];
+		if (filterResult[i]) {
+			delete filterResult[i];
+		}
 		return this.saveData(data);
 	};
 	this.replaceItem = function(item) {
@@ -87,7 +92,6 @@ var Todolist = function (storage) {
 		return this.saveData(data);
 	};
 	this.getItem = function (i) {
-		
 		return data[i];
 	};
 	this.filterItems = function(filterValue) {
@@ -119,7 +123,7 @@ var Todolist = function (storage) {
 		for (var key in data) {
 			if (data[key].tags){
 				for (var i = 0; i < data[key].tags.length; i++) {
-					if (tagScope.indexOf(data[key].tags[i]) == '-1') {
+					if (tagScope.indexOf(data[key].tags[i]) == '-1' && data[key].tags[i]) {
 						tagScope.push(data[key].tags[i]);
 					}
 				}

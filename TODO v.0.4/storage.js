@@ -5,15 +5,15 @@ var ListStorage = function() {
 	var localStorage = window['localStorage'],
 		savedItems = localStorage.getItem("Items");
 };
-ListStorage.prototype.getData = function () {
-	var itemsToSave = localStorage.getItem("Items");
+ListStorage.prototype.getData = function (key) {
+	var itemsToSave = localStorage.getItem(key);
 		if (itemsToSave) {
 			var dataToDisplay = JSON.parse(itemsToSave);
 		} else {dataToDisplay = {}}
 	return dataToDisplay;
 };
-ListStorage.prototype.saveData = function (data) {
-	return localStorage.setItem("Items", JSON.stringify(data));
+ListStorage.prototype.saveData = function (key, data) {
+	return localStorage.setItem(key, JSON.stringify(data));
 };
 return ListStorage;
 });
