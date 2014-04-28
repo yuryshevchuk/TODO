@@ -1,6 +1,7 @@
-window.Form = (function (){
+define(function (){
 'use strict';
-var Form = function (formPlace) {
+console.log("form.js loaded");
+var InputForm = function (formPlace) {
 	var self = this;
 	var formElement, overlay, popup, newTask, newTag, condition, cancelEditingItem, newDiv, cancelFormButton, tagsArr;
 		newDiv = document.createElement('div');
@@ -66,15 +67,15 @@ var Form = function (formPlace) {
 	};
 };
 
-Form.prototype.submitHandler = function() {
+InputForm.prototype.submitHandler = function() {
 		this.onSubmitHandler(this.saveItemEdit());
 		return false;
 };
 
-Form.prototype.cancelHandler = function (event) {
+InputForm.prototype.cancelHandler = function (event) {
 	event = event || window.event;
 	var target = event.target || event.srcElement;
 	self.onCancel(item);
 };
-return Form;
-}());
+return InputForm;
+});

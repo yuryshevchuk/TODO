@@ -1,5 +1,6 @@
-window.Todolist = (function (){
+define(function (){
 'use strict';
+console.log("todolist.js loaded");
 var Todolist = function (storage) {
 	var data = {}, tagScope = [], numbOfPages, filterResult={};
 	this.getData = function (filterObject) {
@@ -129,4 +130,4 @@ var Todolist = function (storage) {
 };
 
 return Todolist;
-}());
+});

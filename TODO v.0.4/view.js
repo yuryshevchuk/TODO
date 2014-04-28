@@ -1,5 +1,6 @@
-window.View = (function (){
-
+define(["mustache", "templates/listTemplate", "templates/upperTagsTemplate", "templates/paginationTemplate"], function (Mustache, listTemplate, upperTagsTemplate, paginationTemplate){
+'use strict';
+console.log("view.js loaded");
 var View = function (placeForData, placeForUpperTags, placeForPagination){
 	var multipleSelect = [], selectedTags = [], classTagSelected = [];
 
@@ -14,8 +15,6 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 
 	this.refreshItems = function (data, numbOfPages){
 
-		var listTemplate = "{{#item}}<li class='todo-item {{condition}}' data-index='{{content}}'><input data-index='{{content}}' {{check}} type='checkbox'><a href='' data-index='{{content}}'>{{content}}</a><a href='' id='cancelEditingItem' class='cross-button-link position-right' data-index='{{content}}'></a><br>{{#tags}}<a href='' class='tags-small' data-value='{{.}}'>#{{.}}</a>{{/tags}}</li>{{/item}}";
-		var paginationTemplate = "{{#numbOfPages}}<li><a href='' class='page' data-value='{{.}}'>{{.}}</a></li>{{/numbOfPages}}";
 			if (numbOfPages != 1) {
 				for (var i = 1; i <= numbOfPages; i++) {
 					renderData["numbOfPages"].push(i);
@@ -37,7 +36,6 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 	};
 
 	this.renderUpperTags = function (tagScope, dataValue){
-		var template = "<a href='' id='allTagsLink' class='reset-filter'>Show All</a>";
 		var selection;
 		classTagSelected.length = 50;
 		if (dataValue && selectedTags.indexOf(dataValue) == '-1') {
@@ -51,8 +49,7 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 				}
 				renderData["upperTags"].push({"value": tagScope[i], "selection": classTagSelected[i]});
 			}
-		template += "{{#upperTags}}<a href='' class='upper-tags {{selection}}' data-value='{{value}}'>{{value}}</a>{{/upperTags}}";
-		placeForUpperTags.innerHTML = Mustache.render(template, renderData);
+		placeForUpperTags.innerHTML = Mustache.render(upperTagsTemplate, renderData);
 		classTagSelected = [];
 		renderData["upperTags"]=[];
 	};
@@ -62,4 +59,4 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 	};
 };
 return View;
-}());
+});

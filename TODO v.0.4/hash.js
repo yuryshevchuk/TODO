@@ -1,17 +1,17 @@
-window.Hash = (function (){
+define(function (){
 'use strict';
+console.log("hash.js loaded");
 var vars={page: 1}, oldHash = '', massive = [], filters = [], Hash;
 window.location.hash = '#&page=1';
 Hash = {
 	get: function(){
 		var hash, splitter, hashes, stroke;
 			hashes = decodeURIComponent(window.location.hash.substr(1));
-			splitter = '&';
 			vars = {filter: [], page: []};
 			if (hashes.length == 0) {
 				return vars;
 			} else {
-				hashes = hashes.split(splitter);
+				hashes = hashes.split('&');
 			}
 		for (var i in hashes) {
 			hash = hashes[i].split('=');
@@ -70,7 +70,7 @@ Hash = {
 	}
 };
 return Hash;
-}());
+});
 
 /*for (var i in hashes) {
 			if (hashes.hasOwnProperty(i)) {

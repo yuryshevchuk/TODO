@@ -1,17 +1,24 @@
-(function(){
+define(["form", "hash", "storage", "todolist", "view"], function(InputForm, Hash, ListStorage, Todolist, View){
 'use strict';
 var storage, list, view, form, addItemLink, upperTags, smallTags, ul, body, resetFilter, pagination;
+console.log("controller.js loaded");
+console.log(InputForm);
+console.log(Hash);
+console.log(ListStorage);
+console.log(Todolist);
+console.log(View);
 
-window.onload = function (){
+(function (){
 	ul = document.getElementById("list");
 	upperTags = document.getElementById("tags");
 	addItemLink = document.getElementById("addNewItemLink");
 	body = document.getElementsByTagName("body").item(0);
 	pagination = document.getElementById("paginationUl");
+
 		storage = new ListStorage();
 		list = new Todolist(storage);
 		view = new View(ul, upperTags, pagination);
-		form = new Form(body);
+		form = new InputForm(body);
 			addItemLink.addEventListener("click", addItemLinkHandler);
 			ul.addEventListener("click", listEventHandler);
 			form.onSubmitHandler = submitFormHandler;
@@ -27,7 +34,7 @@ window.onload = function (){
 						resetFilter.addEventListener("click", resetFilterEvent);
 					};
 				}, 5);
-};
+}());
 
 function submitFormHandler (item) {
 	(!item.index) ? list.addData(item) : list.saveData();
@@ -85,4 +92,4 @@ function listEventHandler (event){
 				form.editItem(list.getItem(i));
 		}
 };
-}());
+});
