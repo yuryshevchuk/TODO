@@ -1,11 +1,18 @@
 define(function (){
 'use strict';
-console.log("controller.js loaded");
+console.log("hash.js loaded");
 var vars={page: 1}, oldHash = '', massive = [], filters = [], Hash;
-window.location.hash = '#&page=1';
-Hash = {
-	get: function(){
-		var hash, splitter, hashes, stroke;
+	if (!window.location.hash) {
+		window.location.hash = '#&page=1';
+	}
+var Hash = function(){
+	this.setStoragedFilters = function (storaged) {
+		if (storaged) {
+			filters = storaged;
+		}
+	},
+	this.get = function(){
+		var hash, hashes, stroke;
 			hashes = decodeURIComponent(window.location.hash.substr(1));
 			vars = {filter: [], page: []};
 			if (hashes.length == 0) {
@@ -24,15 +31,17 @@ Hash = {
 					vars[hash[0]] = hash[1];
 				}
 		}
+
 		return vars;
 	},
-	applySavedVars: function(value){
+	this.applySavedVars = function(value){
 		if (value) {
 			vars = value;
 		} 
 	},
-	set: function(values){
+	this.set = function(values){
 		var hash = '';
+		console.log(values);
 		if (values.page) {
 			hash += '&page=' + values.page;
 		}
@@ -50,18 +59,18 @@ Hash = {
 		}
 		window.location.hash = hash;
 	},
-	addFilter: function(val){
+	this.addFilter = function(val){
 		var hash = this.get() || {};
 		hash['filter'] = val;
 		this.set(hash);
 	},
-	changePage: function(val) {
+	this.changePage = function(val) {
 		var hash = this.get() || {};
 		hash.filter = '';
 		hash['page'] = val;
 		this.set(hash);
 	},
-	hashEventHanler: function (){
+	this.hashEventHanler = function (){
 		if(oldHash !== window.location.hash ){
 			this.get();
 			oldHash = window.location.hash;
@@ -70,11 +79,13 @@ Hash = {
 			return false;
 		}
 	},
-	getVars: function (){
-		console.log(vars);
+	this.getFilters = function () {
+		return filters;
+	},
+	this.getVars = function (){
 		return vars;
 	},
-	clear: function (){
+	this.clear = function (){
 		vars = {filter: [], page: [1]};
 		massive = [];
 		filters = [];

@@ -1,23 +1,35 @@
-define(function (){
+define(["mustache", "templates/formStaticTemplate", "templates/formDynamicTemplate"], function (Mustache, formStaticTemplate, formDynamicTemplate){
 'use strict';
 console.log("form.js loaded");
 var InputForm = function (formPlace) {
 	var self = this;
-	var formElement, overlay, popup, newTask, newTag, condition, cancelEditingItem, newDiv, cancelFormButton, tagsArr;
-		newDiv = document.createElement('div');
-		newDiv.setAttribute('id', 'formWrapper');
-		newDiv.innerHTML = "<a href='' id='overlay' class='hidden'></a><div id='popup'><div id='popupContent'><a href=''id='cancelEditingItem' class='cross-button-link position-right'></a><form id='taskForm' autocomplete='off'><h4>Add new task:</h4><input id='newTask' type='text' required><label for='newTag'>Tags:</label><input id='newTag' name='newTag' type='text'><input id='condition' type='checkbox'><label for='condition'>Done</label><input id='confirmFormButton' class='form-button position-right' type='submit' value='Confirm'></input><input type='button' id='cancelFormButton' class='red form-button position-right' value='Cancel'></input></form></div></div>";
-		formPlace.appendChild(newDiv);
+	var formElement, overlay, popup, newTask, newTag, condition, cancelEditingItem, taskFormWrapper, cancelFormButton, formInputs, tagsArr;
+	var renderFormObj = {
+		'itemContent': '',
+		'itemTags': '',
+		'checked': '',
+		'formTitle': ''
+	};
+		tagsArr = [];
+		taskFormWrapper = document.createElement('div');
+		formInputs = document.createElement('div');
+		taskFormWrapper.setAttribute('id', 'formWrapper');
+		taskFormWrapper.innerHTML = formStaticTemplate;
+		formPlace.appendChild(taskFormWrapper);
 			overlay = document.getElementById('overlay');
 			popup = document.getElementById('popup');
-			newTask = document.getElementById('newTask');
-			newTag = document.getElementById('newTag');
-			condition = document.getElementById('condition');
-			overlay = document.getElementById('overlay');
 			cancelEditingItem = document.getElementById("cancelEditingItem");
 			formElement = document.getElementById("taskForm");
 			cancelFormButton = document.getElementById("cancelFormButton");
-		tagsArr = [];
+		
+
+
+		formInputs.innerHTML = Mustache.render(formDynamicTemplate, renderFormObj);
+		formElement.insertBefore(formInputs, formElement.firstChild);
+		newTask = document.getElementById('newTask');
+		newTag = document.getElementById('newTag');
+		condition = document.getElementById('condition');
+
 		cancelEditingItem.addEventListener("click", function(event) {
 			event = event || window.event;
 			event.preventDefault();
@@ -45,20 +57,29 @@ var InputForm = function (formPlace) {
 		this.editItem();
 	};
 	this.editItem = function(item) {
+		console.log(item);
 		this.item = item || {};
 		this.renderForm(this.item);
 		this.show();
 	}
 	this.renderForm = function (item) {
-				newTask.value = (item.content) ? item.content : '';
-				newTag.value = (item.tags) ? item.tags.join(', ') : '';
-				condition.checked = (item.condition == 'done');
+		console.log(item);
+				renderFormObj['itemContent'] = (item.content) ? item.content : '';
+				(item.content) ? (renderFormObj['formTitle'] = 'EDIT YOUR TASK') : (renderFormObj['formTitle'] = 'ADD NEW TASK');
+				renderFormObj['itemTags'] = (item.tags) ? item.tags.join(', ') : '';
+				(item.condition == 'done') ? (renderFormObj['checked'] = 'checked') : (renderFormObj['checked'] = '')
+				formInputs.innerHTML = Mustache.render(formDynamicTemplate, renderFormObj);
 	};
 	this.saveItemEdit = function (){
+		newTask = document.getElementById('newTask');
+		newTag = document.getElementById('newTag');
+		condition = document.getElementById('condition');
 		this.item.content = newTask.value;
 		(condition.checked) ? (this.item.condition = 'done') : (this.item.condition = 'active');
 		this.item.tags = newTag.value.split(', ');
+		this.item.index = 'edited';
 		this.hide();
+		console.log(this.item);
 		return this.item
 	};
 	formElement.onsubmit = function (event) {

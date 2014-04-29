@@ -26,7 +26,7 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 				for (var i = 1; i <= numbOfPages; i++) {
 					renderData["numbOfPages"].push(i);
 				}
-			}
+			} 
 				for (var key in data) {
 					if (data[key].condition == 'active') {
 						data[key]["check"] = '';
@@ -42,26 +42,17 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 		renderData["numbOfPages"] = [];
 	};
 
-	this.renderUpperTags = function (tagScope, dataValue){
+	this.renderUpperTags = function (tagScope, hash){
 		var selection;
 		classTagSelected.length = 50;
-		if (dataValue && renderData["selectedTags"].indexOf(dataValue) == '-1') {
-			renderData["selectedTags"].push(dataValue);
-		} else {
-			for (var i = 0; i < renderData["selectedTags"].length; i++) {
-				if (renderData["selectedTags"][i] == dataValue) {
-					renderData["selectedTags"].splice(i, 1);
-				}
-			}
-		}
-			for (var i = 0; i < tagScope.length; i++) {
-				for (var j = 0; j < renderData["selectedTags"].length; j++) {
-					if (tagScope[i] == renderData["selectedTags"][j]) {
+		for (var i = 0; i < tagScope.length; i++) {
+			for (var j = 0; j < hash["filter"].length; j++) {
+				if (tagScope[i] == hash["filter"][j]) {
 						classTagSelected.splice(i, 0, 'selected');
-					}
 				}
-				renderData["upperTags"].push({"value": tagScope[i], "selection": classTagSelected[i]});
 			}
+			renderData["upperTags"].push({"value": tagScope[i], "selection": classTagSelected[i]});
+		}
 		placeForUpperTags.innerHTML = Mustache.render(upperTagsTemplate, renderData);
 		classTagSelected = [];
 		renderData["upperTags"] = [];

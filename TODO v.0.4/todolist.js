@@ -1,12 +1,11 @@
 define(function (){
 'use strict';
 console.log("todolist.js loaded");
-var Todolist = function (storage) {
+var Todolist = function (storage, numbOfItemsOnPage) {
 	var data = {}, tagScope = [], numbOfPages, filterResult={};
 	this.getData = function (filterObject) {
 		var filteredData=[];
 		tagScope = [];
-		console.log(filterObject);
 		if (filterObject) {
 			if(filterObject.filter){
 				for (var i = 0; i < filterObject.filter.length; i++) {
@@ -17,18 +16,17 @@ var Todolist = function (storage) {
 						filterResult[filteredData[key][i].content] = filteredData[key][i];
 					}
 				}
-				console.log(filterResult);
 				if (Object.keys(filterResult).length) {
-					return this.pagination(filterResult, filterObject.page);
+					return this.pagination(filterResult, filterObject.page, numbOfItemsOnPage);
 				} else {
-					return this.pagination(data, filterObject.page);
-				} 
-			} 
+					return this.pagination(data, filterObject.page, numbOfItemsOnPage);
+				}
+			}
 		}
 		if (!data.length){
 			data = this.loadData();
 				if (filterObject) {
-					return this.pagination(data, filterObject.page);
+					return this.pagination(data, filterObject.page, numbOfItemsOnPage);
 				} else {
 					return data;
 				}
@@ -36,14 +34,14 @@ var Todolist = function (storage) {
 	};
 	this.pagination = function (enteredData, page) {
 		var pageFilter = [], result = {};
-		numbOfPages = Math.ceil(Object.keys(enteredData).length/6);
+		numbOfPages = Math.ceil(Object.keys(enteredData).length/numbOfItemsOnPage);
 		if (page && page <= numbOfPages) {
 				for (var key in enteredData) {
 					if (enteredData[key]){
 						pageFilter.push(enteredData[key]);
 					}
 				}
-				for (var i = page*6 - 6; i < page*6; i++) {
+				for (var i = page*numbOfItemsOnPage - numbOfItemsOnPage; i < page*numbOfItemsOnPage; i++) {
 					if (pageFilter[i]) {
 						result[pageFilter[i].content] = pageFilter[i];
 					}
@@ -87,12 +85,12 @@ var Todolist = function (storage) {
 		}
 		return this.saveData(data);
 	};
-	this.replaceItem = function(item) {
-		data.splice(item.index, 1, item);
-		return this.saveData(data);
-	};
 	this.getItem = function (i) {
-		return data[i];
+		for (var key in data) {
+			if (data[key].content == i) {
+				return data[key];
+			};
+		}
 	};
 	this.filterItems = function(filterValue) {
 		var filteredData = [];
