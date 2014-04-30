@@ -77,7 +77,6 @@ var InputForm = function (formPlace) {
 		this.item.content = newTask.value;
 		(condition.checked) ? (this.item.condition = 'done') : (this.item.condition = 'active');
 		this.item.tags = newTag.value.split(', ');
-		this.item.index = 'edited';
 		this.hide();
 		console.log(this.item);
 		return this.item

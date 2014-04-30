@@ -45,10 +45,13 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 	this.renderUpperTags = function (tagScope, hash){
 		var selection;
 		classTagSelected.length = 50;
+		
 		for (var i = 0; i < tagScope.length; i++) {
-			for (var j = 0; j < hash["filter"].length; j++) {
-				if (tagScope[i] == hash["filter"][j]) {
-						classTagSelected.splice(i, 0, 'selected');
+			if (hash) {
+				for (var j = 0; j < hash["filter"].length; j++) {
+					if (tagScope[i] == hash["filter"][j]) {
+							classTagSelected.splice(i, 0, 'selected');
+					}
 				}
 			}
 			renderData["upperTags"].push({"value": tagScope[i], "selection": classTagSelected[i]});
