@@ -12,15 +12,7 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 		"selectedTags": [],
 		"numbOfPages": []
 	};
-	this.getRenderData = function (){
-		return renderData;
-	};
-	this.applySavedRenderData = function (value){
-		console.log(value);
-		if (Object.keys(value).length) {
-			renderData = value;
-		} 
-	}
+
 	this.refreshItems = function (data, numbOfPages){
 			if (numbOfPages != 1) {
 				for (var i = 1; i <= numbOfPages; i++) {
@@ -44,8 +36,7 @@ var View = function (placeForData, placeForUpperTags, placeForPagination){
 
 	this.renderUpperTags = function (tagScope, hash){
 		var selection;
-		classTagSelected.length = 50;
-		
+		classTagSelected.length = tagScope.length;
 		for (var i = 0; i < tagScope.length; i++) {
 			if (hash) {
 				for (var j = 0; j < hash["filter"].length; j++) {
