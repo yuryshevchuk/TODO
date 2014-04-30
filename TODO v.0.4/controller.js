@@ -28,6 +28,7 @@ console.log("controller.js loaded");
 				setInterval(function hashHandler(){
 					if (hash.hashEventHanler()) {
 						view.refreshItems(list.getData(hash.getVars()), list.getNumberOfPages());
+						view.renderUpperTags(list.getUpperTags(), hash.get());
 						storage.saveData("Hash", window.location.hash);
 						storage.saveData("Filters", hash.getFilters());
 					};
