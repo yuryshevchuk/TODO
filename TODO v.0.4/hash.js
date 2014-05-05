@@ -1,47 +1,36 @@
 define(function (){
 'use strict';
 console.log("hash.js loaded");
-var vars={page: 1}, oldHash = '', massive = [], filters = [], Hash;
+var hashObject={}, oldHash = '', filters = [], Hash;
 	if (!window.location.hash) {
 		window.location.hash = '#&page=1';
 	}
 var Hash = function(){
-	this.setStoragedFilters = function (storaged) {
-		if (storaged) {
-			filters = storaged;
-		}
-	},
 	this.get = function(){
-		var hash, hashes, stroke;
+		var hash, hashes, filter;
 			hashes = decodeURIComponent(window.location.hash.substr(1));
-			vars = {filter: [], page: []};
+			hashObject = {filter: [], page: []};
 			if (hashes.length == 0) {
-				return vars;
+				return hashObject;
 			} else {
 				hashes = hashes.split('&');
 			}
 		for (var i in hashes) {
 			hash = hashes[i].split('=');
 				if(hash[0] == "filter" && hash[1]) {
-					stroke = hash[1].split(',');
-					for (var i = 0; i < stroke.length; i++) {
-						vars[hash[0]].push(stroke[i]);
+					filter = hash[1].split(',');
+					for (var i = 0; i < filter.length; i++) {
+						hashObject[hash[0]].push(filter[i]);
 					};
 				} else if (hash[0] == "page" && hash[1]){
-					vars[hash[0]] = hash[1];
+					hashObject[hash[0]] = hash[1];
 				}
 		}
-
-		return vars;
-	},
-	this.applySavedVars = function(value){
-		if (value) {
-			vars = value;
-		} 
-	},
+		filters = hashObject.filter;
+		return hashObject;
+	};
 	this.set = function(values){
 		var hash = '';
-		console.log(values);
 		if (values.page) {
 			hash += '&page=' + values.page;
 		}
@@ -58,18 +47,21 @@ var Hash = function(){
 			hash += '&filter=' + filters.join(',');
 		}
 		window.location.hash = hash;
-	},
+	};
 	this.addFilter = function(val){
 		var hash = this.get() || {};
 		hash['filter'] = val;
 		this.set(hash);
-	},
+	};
 	this.changePage = function(val) {
 		var hash = this.get() || {};
 		hash.filter = '';
 		hash['page'] = val;
 		this.set(hash);
-	},
+	};
+	this.getActivePage = function () {
+		return hashObject.page;
+	};
 	this.hashEventHanler = function (){
 		if(oldHash !== window.location.hash ){
 			this.get();
@@ -78,16 +70,12 @@ var Hash = function(){
 		} else {
 			return false;
 		}
-	},
-	this.getFilters = function () {
-		return filters;
-	},
-	this.getVars = function (){
-		return vars;
-	},
+	};
+	this.getHashObject = function (){
+		return hashObject;
+	};
 	this.clear = function (){
-		vars = {filter: [], page: [1]};
-		massive = [];
+		hashObject = {filter: [], page: []};
 		filters = [];
 		window.location.hash = '#&page=1';
 	}

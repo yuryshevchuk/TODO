@@ -47,7 +47,6 @@ var Todolist = function (storage, numbOfItemsOnPage) {
 		return result;
 	};
 	this.getNumberOfPages = function (){
-		console.log(numbOfPages);
 		return numbOfPages;
 	};
 	this.loadData = function () {
@@ -58,12 +57,26 @@ var Todolist = function (storage, numbOfItemsOnPage) {
 	};
 	this.addData = function (item) {
 		if (item){
-			item.index = 'add';
+			item.index = 'added';
 			data[item.content]=item;
 		}
 		return this.saveData(data);
 	};
+	this.editData = function (item, uneditedContent) {
+		if (item) {
+			console.log(uneditedContent, item);
+			item.index = 'edited';
+			data[uneditedContent] = item;
+			if (data[item.content] != data[uneditedContent]) {
+				data[item.content] = data[uneditedContent];
+				delete data[uneditedContent];
+			}
+		}
+		return this.saveData(data);
+	};
 	this.toogleItemStatus = function (i){
+		console.log(i);
+		console.log(data);
 		(data[i].condition == "active") ? data[i].condition = "done" : data[i].condition = "active";
 		return this.saveData(data);
 	};

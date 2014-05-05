@@ -16,19 +16,11 @@ var InputForm = function (formPlace) {
 		taskFormWrapper.setAttribute('id', 'formWrapper');
 		taskFormWrapper.innerHTML = formStaticTemplate;
 		formPlace.appendChild(taskFormWrapper);
-			overlay = document.getElementById('overlay');
-			popup = document.getElementById('popup');
-			cancelEditingItem = document.getElementById("cancelEditingItem");
-			formElement = document.getElementById("taskForm");
-			cancelFormButton = document.getElementById("cancelFormButton");
-		
-
-
-		formInputs.innerHTML = Mustache.render(formDynamicTemplate, renderFormObj);
-		formElement.insertBefore(formInputs, formElement.firstChild);
-		newTask = document.getElementById('newTask');
-		newTag = document.getElementById('newTag');
-		condition = document.getElementById('condition');
+		overlay = document.getElementById('overlay');
+		popup = document.getElementById('popup');
+		cancelEditingItem = document.getElementById("cancelEditingItem");
+		formElement = document.getElementById("taskForm");
+		cancelFormButton = document.getElementById("cancelFormButton");
 
 		cancelEditingItem.addEventListener("click", function(event) {
 			event = event || window.event;
@@ -57,19 +49,21 @@ var InputForm = function (formPlace) {
 		this.editItem();
 	};
 	this.editItem = function(item) {
-		console.log(item);
 		this.item = item || {};
 		this.renderForm(this.item);
 		this.show();
-	}
-	this.renderForm = function (item) {
-		console.log(item);
-				renderFormObj['itemContent'] = (item.content) ? item.content : '';
-				(item.content) ? (renderFormObj['formTitle'] = 'EDIT YOUR TASK') : (renderFormObj['formTitle'] = 'ADD NEW TASK');
-				renderFormObj['itemTags'] = (item.tags) ? item.tags.join(', ') : '';
-				(item.condition == 'done') ? (renderFormObj['checked'] = 'checked') : (renderFormObj['checked'] = '')
-				formInputs.innerHTML = Mustache.render(formDynamicTemplate, renderFormObj);
 	};
+	this.renderForm = function (item) {
+		renderFormObj['itemContent'] = (item.content) ? item.content : '';
+		(item.content) ? (renderFormObj['formTitle'] = 'EDIT YOUR TASK') : (renderFormObj['formTitle'] = 'ADD NEW TASK');
+		renderFormObj['itemTags'] = (item.tags) ? item.tags.join(', ') : '';
+		(item.condition == 'done') ? (renderFormObj['checked'] = 'checked') : (renderFormObj['checked'] = '')
+		formInputs.innerHTML = Mustache.render(formDynamicTemplate, renderFormObj);
+		formElement.insertBefore(formInputs, formElement.firstChild);
+	};
+	this.getUneditedContent = function () {
+		return renderFormObj['itemContent'];
+	}
 	this.saveItemEdit = function (){
 		newTask = document.getElementById('newTask');
 		newTag = document.getElementById('newTag');
@@ -92,12 +86,6 @@ var InputForm = function (formPlace) {
 InputForm.prototype.submitHandler = function() {
 		this.onSubmitHandler(this.saveItemEdit());
 		return false;
-};
-
-InputForm.prototype.cancelHandler = function (event) {
-	event = event || window.event;
-	var target = event.target || event.srcElement;
-	self.onCancel(item);
 };
 return InputForm;
 });
