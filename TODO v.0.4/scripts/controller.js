@@ -1,4 +1,4 @@
-require(["form", "hash", "storage", "todolist", "view"], function(InputForm, Hash, ListStorage, Todolist, View){
+require(["form", "hash", "storage", "todolist", "view/view", "config"], function(InputForm, Hash, ListStorage, Todolist, View, config){
 'use strict';
 var storage, list, view, form, hash, addItemLink, upperTags, smallTags, ul, body, resetFilter, pagination, pages;
 console.log("controller.js loaded");
@@ -12,7 +12,7 @@ console.log("controller.js loaded");
 	pagination = document.getElementById("paginationUl");
 
 		storage = new ListStorage();
-		list = new Todolist(storage, 6);
+		list = new Todolist(storage, config["numberOfNotes"]);
 		view = new View(ul, upperTags, pagination);
 		form = new InputForm(body);
 		hash = new Hash();
@@ -25,28 +25,19 @@ console.log("controller.js loaded");
 			pagination.addEventListener("click", paginationEventHandler);
 		
 				setInterval(function hashHandler(){
-					if (hash.hashEventHanler()) {
-						view.refreshItems(list.getData(hash.getHashObject()), list.getNumberOfPages());
-						view.renderUpperTags(list.getUpperTags(), hash.get());
-						storage.saveData("Hash", window.location.hash);
-						pages = document.querySelectorAll('.page');
-						if (pages.length) {
-							pages[hash.getActivePage()-1].setAttribute('class', 'activePage');
-						}
+					if (hash.hashEventHandler()) {
+						refresh();
 					};
 				}, 5);
-			window.location.hash = storage.getData("Hash");
-			view.renderUpperTags(list.getUpperTags(), hash.get());
 }());
 
-function submitFormHandler (item) {
-	(!item.index) ? list.addData(item) : list.editData(item, form.getUneditedContent());
+function refresh () {
+	view.refreshItems(list.getData(hash.getHashObject()), list.getNumberOfPages(), hash.getHashObject("page"));
 	view.renderUpperTags(list.getUpperTags(), hash.get());
-	view.refreshItems(list.getData(hash.getHashObject()), list.getNumberOfPages());
-	pages = document.querySelectorAll('.page');
-	if (pages.length) {
-		pages[hash.getActivePage()-1].setAttribute('class', 'activePage');
-	}
+}
+function submitFormHandler (item) {
+	(!item.index) ? list.addData(item) : list.saveData();
+	refresh();
 };
 function addItemLinkHandler(event) {
 	event = event || window.event;
@@ -58,10 +49,9 @@ function addItemLinkHandler(event) {
 function paginationEventHandler(event) {
 	event = event || window.event;
 	event.preventDefault();
-	event.stopPropagation();
 	var target = event.target || event.srcElement;
 		if(target.dataset.value) {
-			hash.changePage(target.dataset.value);
+			hash.putVariable("page", target.dataset.value);
 		}
 };
 
@@ -70,12 +60,11 @@ function tagEventHandler (event) {
 	event.preventDefault();
 	var target = event.target || event.srcElement;
 		if (target.dataset.value) {
-			hash.addFilter(target.dataset.value);
-			hash.changePage(1);
+			hash.addUniqueItemToArray("filter", target.dataset.value);
+			hash.putVariable("page", 1);
 		}
 		if (target.className == "reset-filter") {
 			hash.clear();
-			view.clearTagsSelection();
 		}
 	return false;
 };
@@ -87,18 +76,17 @@ function listEventHandler (event){
 	var i = target.dataset.index;
 		if (target.tagName == "INPUT") {
 			list.toogleItemStatus(i);
-			view.refreshItems(list.getData(hash.getHashObject()), list.getNumberOfPages());
+			view.refreshItems(list.getData(hash.getHashObject()), list.getNumberOfPages(), hash.getHashObject("page"));
 		} else if (target.tagName == "A" && target.id =="cancelEditingItem"){
 			list.deleteItem(i);
-			view.refreshItems(list.getData(hash.getHashObject()), list.getNumberOfPages());
-			view.renderUpperTags(list.getUpperTags(), hash.get());
-			hash.changePage(hash.getActivePage());
+			refresh();
+				if (list.getNumberOfPages() == (hash.getHashObject("page") - 1)) {
+					hash.putVariable("page", list.getNumberOfPages());
+				} else {
+					hash.putVariable("page", hash.getHashObject("page"));
+				}
 		} else if (target.tagName == "A" && target.dataset.index){
 			form.editItem(list.getItem(i));
 		}
-	pages = document.querySelectorAll('.page');
-	if (pages.length) {
-		pages[hash.getActivePage()-1].setAttribute('class', 'activePage');
-	}
 };
 });
