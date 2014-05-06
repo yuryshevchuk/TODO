@@ -1,3 +1,16 @@
+todolist version 0.4.6/
+- new pagination and filtration modules
+
+
+todolist version 0.4.5/
+- optimized js code
+- all methods in constructor's prototype
+- new hash methods logic
+- all pagination conditions realized in mustache
+- new file structure
+
+
+
 todolist version 0.4.3/
 
 features:

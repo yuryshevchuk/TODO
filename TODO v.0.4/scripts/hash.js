@@ -3,16 +3,21 @@ define(function (){
 console.log("hash.js loaded");
 
 var Hash = function(){
-	var hashObject = {filter: [], page: []}, oldHash = '';
 	if (!window.location.hash) {
-		window.location.hash = '#page=1';
+		this.clear();
 	}
-	this.get = function(){
+	this.hashObject = {
+		filter: [],
+		page: []
+	};
+	this.oldHash = '';
+};
+Hash.prototype.get = function(){
 		var hash, hashes, arr;
 			hashes = decodeURIComponent(window.location.hash.substr(1));
-			hashObject = {filter: [], page: []};
+			this.hashObject = {filter: [], page: []};
 				if (hashes.length == 0) {
-					return hashObject;
+					return this.hashObject;
 				} else {
 					hashes = hashes.split('&');
 				}
@@ -20,80 +25,56 @@ var Hash = function(){
 						hash = hashes[i].split('=');
 						arr = hash[1].split(',');
 							for (var i = 0; i < arr.length; i++) {
-								hashObject[hash[0]].push(arr[i]);
+								this.hashObject[hash[0]].push(arr[i]);
 							}
 					}
-		return hashObject;
+		return this.hashObject;
 	};
-	this.set = function(){
-		// var hash = '';
-		// console.log(hashObject);
-		// for (var key in hashObject) {
-		// 	if (Array.isArray(hashObject[key]) && hashObject[key].length) {
-		// 		hash += key + "=" + hashObject[key].join(',');
-		// 	} else {
-		// 		hash += "&" + key + "=" + hashObject[key];
-		// 	}
-		// }
-		// window.location.hash = hash;
-		var hash = '', filters;
-		hash += 'page=' + hashObject['page'];
-		filters = hashObject["filter"].join(',');
-			if (filters){
-				hash += '&filter=' + filters;
+Hash.prototype.set = function(){
+		var hashParts = [];
+		for (var key in this.hashObject) {
+			if (Array.isArray(this.hashObject[key]) && this.hashObject[key].length) {
+				hashParts.push(key + "=" + this.hashObject[key].join(','));
+			} else {
+				hashParts.push(key + "=" + this.hashObject[key]);
 			}
-		window.location.hash = hash;
+		}
+		window.location.hash = hashParts.join("&");
 	};
-	this.addUniqueItemToArray = function(name, val){
-		if (hashObject[name].indexOf(val) == '-1') {
-			hashObject[name].push(val);
+Hash.prototype.addUniqueItemToArray = function(name, val){
+		if (this.hashObject[name].indexOf(val) == '-1') {
+			this.hashObject[name].push(val);
 		} else {
-			for (var i = 0; i < hashObject[name].length; i++) {
-				if (hashObject[name][i] == val) {
-					hashObject[name].splice(i, 1);
+			for (var i = 0; i < this.hashObject[name].length; i++) {
+				if (this.hashObject[name][i] == val) {
+					this.hashObject[name].splice(i, 1);
 				}
 			}
 		}
 		this.set();
 	};
-	this.putVariable = function(name, val) {
-		hashObject[name] = val;
+Hash.prototype.putVariable = function(name, val) {
+		this.hashObject[name] = val;
 		this.set();
 	};
-	this.hashEventHandler = function (){
-		if(oldHash !== window.location.hash ){
+Hash.prototype.hashEventHandler = function (){
+		if(this.oldHash !== window.location.hash ){
 			this.get();
-			oldHash = window.location.hash;
+			this.oldHash = window.location.hash;
 			return true;
 		} else {
 			return false;
 		}
 	};
-	this.getHashObject = function (name){
+Hash.prototype.getHashObject = function (name){
 		if (name) {
-			return hashObject[name];
+			return this.hashObject[name];
 		} else {
-			return hashObject;
+			return this.hashObject;
 		}
-		
 	};
-};
 Hash.prototype.clear = function (){
 		window.location.hash = '#page=1';
 };
 return Hash;
 });
-
-
-
-
-/*for (var i in hashes) {
-			if (hashes.hasOwnProperty(i)) {
-				hash = hashes[i].split('=');
-				console.log(hash);
-				if (hash!=undefined){
-					massive.push(hash[1]);
-					vars[hash[0]] = massive;
-				};
-			};
-		};*/

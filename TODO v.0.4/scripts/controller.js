@@ -1,6 +1,6 @@
-require(["form", "hash", "storage", "todolist", "view/view", "config"], function(InputForm, Hash, ListStorage, Todolist, View, config){
+require(["form", "hash", "storage", "todolist", "view/view", "config", "filtration"], function(InputForm, Hash, ListStorage, Todolist, View, config, Filtration){
 'use strict';
-var storage, list, view, form, hash, addItemLink, upperTags, smallTags, ul, body, resetFilter, pagination, pages;
+var storage, list, view, form, hash, addItemLink, upperTags, smallTags, ul, body, resetFilter, pagination, filtration;
 console.log("controller.js loaded");
 
 (function (){
@@ -12,10 +12,11 @@ console.log("controller.js loaded");
 	pagination = document.getElementById("paginationUl");
 
 		storage = new ListStorage();
-		list = new Todolist(storage, config["numberOfNotes"]);
+		list = new Todolist(storage);
 		view = new View(ul, upperTags, pagination);
 		form = new InputForm(body);
 		hash = new Hash();
+		filtration = new Filtration(config["numberOfNotes"]);
 			
 			addItemLink.addEventListener("click", addItemLinkHandler);
 			ul.addEventListener("click", listEventHandler);
@@ -29,10 +30,10 @@ console.log("controller.js loaded");
 						refresh();
 					};
 				}, 5);
-}());
+})();
 
 function refresh () {
-	view.refreshItems(list.getData(hash.getHashObject()), list.getNumberOfPages(), hash.getHashObject("page"));
+	view.refreshItems(list.getData(filtration.filter(list.getData(), hash.getHashObject())), filtration.getNumberOfPages(), hash.getHashObject("page"));
 	view.renderUpperTags(list.getUpperTags(), hash.get());
 }
 function submitFormHandler (item) {
@@ -76,15 +77,11 @@ function listEventHandler (event){
 	var i = target.dataset.index;
 		if (target.tagName == "INPUT") {
 			list.toogleItemStatus(i);
-			view.refreshItems(list.getData(hash.getHashObject()), list.getNumberOfPages(), hash.getHashObject("page"));
+			view.refreshItems(list.getData(filtration.filter(list.getData(), hash.getHashObject())), filtration.getNumberOfPages(), hash.getHashObject("page"));
 		} else if (target.tagName == "A" && target.id =="cancelEditingItem"){
 			list.deleteItem(i);
 			refresh();
-				if (list.getNumberOfPages() == (hash.getHashObject("page") - 1)) {
-					hash.putVariable("page", list.getNumberOfPages());
-				} else {
-					hash.putVariable("page", hash.getHashObject("page"));
-				}
+			hash.putVariable("page", filtration.getActivePage());
 		} else if (target.tagName == "A" && target.dataset.index){
 			form.editItem(list.getItem(i));
 		}
