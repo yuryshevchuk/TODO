@@ -11,35 +11,32 @@ var InputForm = function (formPlace) {
 		'formTitle': ''
 	};
 		tagsArr = [];
-		taskFormWrapper = document.createElement('div');
-		formInputs = document.createElement('div');
-		taskFormWrapper.setAttribute('id', 'formWrapper');
-		taskFormWrapper.innerHTML = formStaticTemplate;
-		formPlace.appendChild(taskFormWrapper);
-		overlay = document.getElementById('overlay');
-		popup = document.getElementById('popup');
-		cancelEditingItem = document.getElementById("cancelEditingItem");
-		formElement = document.getElementById("taskForm");
-		cancelFormButton = document.getElementById("cancelFormButton");
-		formElement.insertBefore(formInputs, formElement.firstChild);
-		cancelEditingItem.addEventListener("click", function(event) {
+		formInputs = $('<div>');
+
+		formPlace.append($("<div id='formWrapper'>").html(formStaticTemplate));
+		overlay = $('#overlay');
+		cancelEditingItem = $("#cancelEditingItem");
+		formElement = $("#taskForm");
+		cancelFormButton = $("#cancelFormButton");
+		formInputs.insertBefore(formElement.children().first());
+		cancelEditingItem.on("click", function(event) {
 			event = event || window.event;
 			event.preventDefault();
-			overlay.setAttribute('class', 'hidden');
+			overlay.addClass('hidden').removeClass('visible');
 		});
-		cancelFormButton.addEventListener("click", function() {
-			overlay.setAttribute('class', 'hidden');
+		cancelFormButton.on("click", function() {
+			overlay.addClass('hidden').removeClass('visible');
 		});
-		overlay.addEventListener("click", function(event) {
+		overlay.on("click", function(event) {
 			event = event || window.event;
 			event.preventDefault();
-			overlay.setAttribute('class', 'hidden');
+			overlay.addClass('hidden').removeClass('visible');
 		});
 	this.show = function () {
-		overlay.setAttribute('class', 'visible');
+		overlay.addClass('visible').removeClass('hidden');
 	};
 	this.hide = function () {
-		overlay.setAttribute('class', 'hidden');
+		overlay.addClass('hidden').removeClass('visible');
 	};
 	this.onSubmitHandler = function () {
 	};
@@ -50,14 +47,14 @@ var InputForm = function (formPlace) {
 		(item.content) ? (renderFormObj['formTitle'] = 'EDIT YOUR TASK') : (renderFormObj['formTitle'] = 'ADD NEW TASK');
 		renderFormObj['itemTags'] = (item.tags) ? item.tags.join(', ') : '';
 		(item.condition == 'done') ? (renderFormObj['checked'] = 'checked') : (renderFormObj['checked'] = '')
-		formInputs.innerHTML = Mustache.render(formDynamicTemplate, renderFormObj);
+		formInputs.html(Mustache.render(formDynamicTemplate, renderFormObj));
 	};
-	formElement.onsubmit = function (event) {
+	formElement.submit(function (event) {
 		event = event || window.event;
 		event.preventDefault();
 		event.stopPropagation();
 		self.submitHandler();
-	};
+	});
 };
 
 InputForm.prototype.addNew = function () {
@@ -69,9 +66,10 @@ InputForm.prototype.editItem = function(item) {
 		this.show();
 };
 InputForm.prototype.saveItemEdit = function (){
-		this.item.content = document.getElementById('newTask').value;
-		(document.getElementById('condition').checked) ? (this.item.condition = 'done') : (this.item.condition = 'active');
-		this.item.tags = document.getElementById('newTag').value.split(', ');
+		this.item.content = $('#newTask').val();
+		($('#condition:checked').length) ? (this.item.condition = 'done') : (this.item.condition = 'active');
+		this.item.tags = $('#newTag').val().split(', ');
+		console.log(this.item)
 		return this.item
 };
 InputForm.prototype.submitHandler = function() {

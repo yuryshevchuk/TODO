@@ -1,15 +1,15 @@
-require(["form", "hash", "storage", "todolist", "view/view", "config", "filtration"], function(InputForm, Hash, ListStorage, Todolist, View, config, Filtration){
+require(["form", "hash", "storage", "todolist", "view/view", "config", "filtration", "libs/jquery"], function(InputForm, Hash, ListStorage, Todolist, View, config, Filtration, jQuery){
 'use strict';
 var storage, list, view, form, hash, addItemLink, upperTags, smallTags, ul, body, resetFilter, pagination, filtration;
 console.log("controller.js loaded");
 
 (function (){
 
-	ul = document.getElementById("list");
-	upperTags = document.getElementById("tags");
-	addItemLink = document.getElementById("addNewItemLink");
-	body = document.getElementsByTagName("body").item(0);
-	pagination = document.getElementById("paginationUl");
+	ul = $("#list");
+	upperTags = $("#tags");
+	addItemLink = $("#addNewItemLink");
+	body = $("body");
+	pagination = $("#paginationUl");
 
 		storage = new ListStorage();
 		list = new Todolist(storage);
@@ -18,12 +18,12 @@ console.log("controller.js loaded");
 		hash = new Hash();
 		filtration = new Filtration(config["numberOfNotes"]);
 			
-			addItemLink.addEventListener("click", addItemLinkHandler);
-			ul.addEventListener("click", listEventHandler);
-			ul.addEventListener("click", tagEventHandler);
+			addItemLink.on("click", addItemLinkHandler);
+			ul.on("click", listEventHandler);
+			ul.on("click", tagEventHandler);
 			form.onSubmitHandler = submitFormHandler;
-			upperTags.addEventListener("click", tagEventHandler);
-			pagination.addEventListener("click", paginationEventHandler);
+			upperTags.on("click", tagEventHandler);
+			pagination.on("click", paginationEventHandler);
 		
 				setInterval(function hashHandler(){
 					if (hash.hashEventHandler()) {
@@ -45,7 +45,6 @@ function addItemLinkHandler(event) {
 	event.preventDefault();
 		form.addNew();
 };
-
 
 function paginationEventHandler(event) {
 	event = event || window.event;

@@ -31,8 +31,8 @@ View.prototype.refreshItems = function (data, pagination, activePage){
 						this.renderData["item"].splice(this.renderData["item"].length, 0, data[key]);
 					}
 				}
-					this.placeForData.innerHTML = Mustache.render(listTemplate, this.renderData);
-					this.placeForPagination.innerHTML = Mustache.render(paginationTemplate, this.renderData);
+					this.placeForData.html(Mustache.render(listTemplate, this.renderData));
+					this.placeForPagination.html(Mustache.render(paginationTemplate, this.renderData));
 		this.renderData["item"] = [];
 		this.renderData["pagination"] = [];
 	};
@@ -48,7 +48,7 @@ View.prototype.renderUpperTags = function (tagScope, hash){
 			}
 			this.renderData["upperTags"].push({"value": tagScope[i], "selection": this.selectedTags[i]});
 		}
-		this.placeForUpperTags.innerHTML = Mustache.render(upperTagsTemplate, this.renderData);
+		this.placeForUpperTags.html(Mustache.render(upperTagsTemplate, this.renderData));
 		this.selectedTags = [];
 		this.renderData["upperTags"] = [];
 	};
